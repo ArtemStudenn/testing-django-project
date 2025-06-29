@@ -1,19 +1,16 @@
 from notes.forms import NoteForm
-from notes.models import Note
 from .base import TestBase, NOTES_ADD, NOTES_EDIT, NOTES_LIST
 
 
 class TestContent(TestBase):
     def test_note_in_author_list(self):
-        note_to_see = Note.objects.get(id=self.note.id)
-        self.assertIn(
-            self.note,
-            self.author_client.get(NOTES_LIST).context['object_list']
-        )
-        self.assertEqual(note_to_see.title, self.note.title)
-        self.assertEqual(note_to_see.text, self.note.text)
-        self.assertEqual(note_to_see.slug, self.note.slug)
-        self.assertEqual(note_to_see.author, self.note.author)
+        notes = self.author_client.get(NOTES_LIST).context['object_list']
+        self.assertIn(self.note, notes)
+        note = notes.get(id=self.note.id)
+        self.assertEqual(note.title, self.note.title)
+        self.assertEqual(note.text, self.note.text)
+        self.assertEqual(note.slug, self.note.slug)
+        self.assertEqual(note.author, self.note.author)
 
     def test_note_not_in_reader_list(self):
         self.assertNotIn(

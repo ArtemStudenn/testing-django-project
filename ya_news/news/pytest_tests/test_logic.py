@@ -47,7 +47,7 @@ def test_author_can_delete_comment(
         author_client, news_delete, comments_redirect
 ):
     assertRedirects(
-        author_client.delete(news_delete), comments_redirect
+        author_client.post(news_delete), comments_redirect
     )
     assert Comment.objects.count() == 0
 
@@ -55,9 +55,9 @@ def test_author_can_delete_comment(
 def test_user_cant_delete_comment_of_another_user(
         not_author_client, news_delete, comment
 ):
-    not_deleted_comment = Comment.objects.get(id=comment.id)
-    not_author_client.delete(news_delete)
+    not_author_client.post(news_delete)
     assert Comment.objects.count() == 1
+    not_deleted_comment = Comment.objects.get(id=comment.id)
     assert not_deleted_comment.text == comment.text
     assert not_deleted_comment.news == comment.news
     assert not_deleted_comment.author == comment.author
@@ -82,7 +82,7 @@ def test_user_cant_edit_comment_of_another_user(
     assert not_author_client.post(
         news_edit, data=COMMENT_DATA
     ).status_code == HTTPStatus.NOT_FOUND
-    not_edited_comment = Comment.objects.get()
+    not_edited_comment = Comment.objects.get(id=comment.id)
     assert not_edited_comment.text == comment.text
     assert not_edited_comment.news == comment.news
     assert not_edited_comment.author == comment.author

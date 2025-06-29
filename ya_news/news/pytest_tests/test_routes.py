@@ -27,15 +27,17 @@ def test_logout(client, users_logout):
     'url, user, expected_status',
     (
         (NEWS_DELETE, AUTHOR_CLIENT, HTTPStatus.OK),
+        (NEWS_DELETE, CLIENT, HTTPStatus.FOUND),
         (NEWS_DELETE, NOT_AUTHOR_CLIENT, HTTPStatus.NOT_FOUND),
         (NEWS_DETAIL, CLIENT, HTTPStatus.OK),
         (NEWS_EDIT, AUTHOR_CLIENT, HTTPStatus.OK),
+        (NEWS_EDIT, CLIENT, HTTPStatus.FOUND),
         (NEWS_EDIT, NOT_AUTHOR_CLIENT, HTTPStatus.NOT_FOUND),
         (NEWS_HOME, CLIENT, HTTPStatus.OK),
         (USERS_LOGIN, CLIENT, HTTPStatus.OK),
         (USERS_SIGNUP, CLIENT, HTTPStatus.OK),
-        (NEWS_DELETE_REDIRECT, CLIENT, HTTPStatus.OK),
-        (NEWS_EDIT_REDIRECT, CLIENT, HTTPStatus.OK),
+        (NEWS_DELETE_REDIRECT, AUTHOR_CLIENT, HTTPStatus.OK),
+        (NEWS_EDIT_REDIRECT, AUTHOR_CLIENT, HTTPStatus.OK),
     )
 )
 def test_pages_availability_for_all_users(url, user, expected_status):

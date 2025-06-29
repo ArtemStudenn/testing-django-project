@@ -24,15 +24,21 @@ from .base import (
 class TestRoutes(TestBase):
     def test_pages_availability(self):
         ways = (
+            (NOTES_ADD, self.client.get, HTTPStatus.FOUND),
             (NOTES_ADD, self.reader_client.get, HTTPStatus.OK),
             (NOTES_DELETE, self.author_client.get, HTTPStatus.OK),
+            (NOTES_DELETE, self.client.get, HTTPStatus.FOUND),
             (NOTES_DELETE, self.reader_client.get, HTTPStatus.NOT_FOUND),
             (NOTES_DETAIL, self.author_client.get, HTTPStatus.OK),
+            (NOTES_DETAIL, self.client.get, HTTPStatus.FOUND),
             (NOTES_DETAIL, self.reader_client.get, HTTPStatus.NOT_FOUND),
             (NOTES_EDIT, self.author_client.get, HTTPStatus.OK),
+            (NOTES_EDIT, self.client.get, HTTPStatus.FOUND),
             (NOTES_EDIT, self.reader_client.get, HTTPStatus.NOT_FOUND),
-            (NOTES_HOME, self.author_client.get, HTTPStatus.OK),
+            (NOTES_HOME, self.client.get, HTTPStatus.OK),
+            (NOTES_LIST, self.client.get, HTTPStatus.FOUND),
             (NOTES_LIST, self.reader_client.get, HTTPStatus.OK),
+            (NOTES_SUCCESS, self.client.get, HTTPStatus.FOUND),
             (NOTES_SUCCESS, self.reader_client.get, HTTPStatus.OK),
             (USERS_LOGIN, self.client.get, HTTPStatus.OK),
             (USERS_LOGOUT, self.client.post, HTTPStatus.OK),
