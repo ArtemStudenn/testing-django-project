@@ -5,11 +5,11 @@ from .base import TestBase, NOTES_ADD, NOTES_EDIT, NOTES_LIST
 
 class TestContent(TestBase):
     def test_note_in_author_list(self):
+        note_to_see = Note.objects.get(id=self.note.id)
         self.assertIn(
             self.note,
             self.author_client.get(NOTES_LIST).context['object_list']
         )
-        note_to_see = Note.objects.get(id=self.note.id)
         self.assertEqual(note_to_see.title, self.note.title)
         self.assertEqual(note_to_see.text, self.note.text)
         self.assertEqual(note_to_see.slug, self.note.slug)

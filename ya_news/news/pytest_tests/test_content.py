@@ -4,9 +4,8 @@ from news.forms import CommentForm
 
 
 def test_news_count(client, news_on_homepage, news_home):
-    response = client.get(news_home)
     assert (
-        response.context['object_list'].
+        client.get(news_home).context['object_list'].
         count() == settings.NEWS_COUNT_ON_HOME_PAGE
     )
 
@@ -19,8 +18,10 @@ def test_news_order(client, news_on_homepage, news_home):
 
 def test_comments_order(client, comments_list, news_detail):
     assert 'news' in client.get(news_detail).context
-    news = client.get(news_detail).context['news']
-    all_timestamps = [comment.created for comment in news.comment_set.all()]
+    all_timestamps = [
+        comment.created for comment in client.get(news_detail)
+        .context['news'].comment_set.all()
+    ]
     assert all_timestamps == sorted(all_timestamps)
 
 

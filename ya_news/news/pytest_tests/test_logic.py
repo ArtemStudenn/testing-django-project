@@ -12,7 +12,6 @@ BAD_WORDS_DATA = [
      } for bad_word in BAD_WORDS
 ]
 COMMENT_DATA = {'text': 'Комментарий'}
-NEW_COMMENT_DATA = {'text': 'Обновленный комментарий'}
 
 
 def test_anonymous_user_cant_create_comment(client, news_detail):
@@ -20,10 +19,12 @@ def test_anonymous_user_cant_create_comment(client, news_detail):
     assert Comment.objects.count() == 0
 
 
-def test_user_can_create_comment(author_client, news_detail, news, author):
+def test_user_can_create_comment(
+        author_client, news_detail, news, author, comments_redirect
+):
     assertRedirects(
         author_client.post(news_detail, data=COMMENT_DATA),
-        f'{news_detail}#comments'
+        comments_redirect
     )
     assert Comment.objects.count() == 1
     comment = Comment.objects.get()
@@ -42,29 +43,35 @@ def test_user_cant_use_bad_words(author_client, news_detail, bad_words):
     assert Comment.objects.count() == 0
 
 
-def test_author_can_delete_comment(author_client, news_delete, news_detail):
+def test_author_can_delete_comment(
+        author_client, news_delete, comments_redirect
+):
     assertRedirects(
-        author_client.delete(news_delete), f'{news_detail}#comments'
+        author_client.delete(news_delete), comments_redirect
     )
     assert Comment.objects.count() == 0
 
 
 def test_user_cant_delete_comment_of_another_user(
-        not_author_client, news_delete
+        not_author_client, news_delete, comment
 ):
+    not_deleted_comment = Comment.objects.get(id=comment.id)
     not_author_client.delete(news_delete)
     assert Comment.objects.count() == 1
+    assert not_deleted_comment.text == comment.text
+    assert not_deleted_comment.news == comment.news
+    assert not_deleted_comment.author == comment.author
 
 
 def test_author_can_edit_comment(
-        author_client, comment, news_detail, news_edit
+        author_client, comment, comments_redirect, news_edit
 ):
     assertRedirects(
-        author_client.post(news_edit, data=NEW_COMMENT_DATA),
-        f'{news_detail}#comments'
+        author_client.post(news_edit, data=COMMENT_DATA),
+        comments_redirect
     )
-    edited_comment = Comment.objects.get()
-    assert edited_comment.text == NEW_COMMENT_DATA['text']
+    edited_comment = Comment.objects.get(id=comment.id)
+    assert edited_comment.text == COMMENT_DATA['text']
     assert edited_comment.news == comment.news
     assert edited_comment.author == comment.author
 
@@ -73,7 +80,7 @@ def test_user_cant_edit_comment_of_another_user(
         not_author_client, comment, news_edit
 ):
     assert not_author_client.post(
-        news_edit, data=NEW_COMMENT_DATA
+        news_edit, data=COMMENT_DATA
     ).status_code == HTTPStatus.NOT_FOUND
     not_edited_comment = Comment.objects.get()
     assert not_edited_comment.text == comment.text

@@ -121,3 +121,8 @@ def news_delete_redirect(users_login, news_delete):
 @pytest.fixture
 def news_edit_redirect(users_login, news_edit):
     return f'{users_login}?next={news_edit}'
+
+
+@pytest.fixture
+def comments_redirect(news_detail):
+    return f'{news_detail}#comments'

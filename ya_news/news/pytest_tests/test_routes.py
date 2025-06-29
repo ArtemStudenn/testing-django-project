@@ -33,7 +33,9 @@ def test_logout(client, users_logout):
         (NEWS_EDIT, NOT_AUTHOR_CLIENT, HTTPStatus.NOT_FOUND),
         (NEWS_HOME, CLIENT, HTTPStatus.OK),
         (USERS_LOGIN, CLIENT, HTTPStatus.OK),
-        (USERS_SIGNUP, CLIENT, HTTPStatus.OK)
+        (USERS_SIGNUP, CLIENT, HTTPStatus.OK),
+        (NEWS_DELETE_REDIRECT, CLIENT, HTTPStatus.OK),
+        (NEWS_EDIT_REDIRECT, CLIENT, HTTPStatus.OK),
     )
 )
 def test_pages_availability_for_all_users(url, user, expected_status):
