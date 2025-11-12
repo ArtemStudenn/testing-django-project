@@ -1,4 +1,4 @@
-# Unittest/pytest learning project
+# Unittest and pytest learning project
 
 Коллекция тестов для двух проектов (платформы для чтения и комментирования новостей YaNews; платформы для чтения и создания заметок YaNote).
 
